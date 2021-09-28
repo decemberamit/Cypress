@@ -29,3 +29,57 @@
     "multiple-cucumber-html-reporter": "^1.18.0"
   }
 }
+
+
+{
+  "name": "maritech.cpm.ui.cypress",
+  "version": "1.0.0",
+  "description": "Cypress End to End Tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:run_chrome_test": "npx cypress run --env configFile=test --headless --browser chrome",
+    "cypress:run_chrome_staging": "npx cypress run --env configFile=staging --headless --browser chrome",
+    "dev": "concurrently \"npm run watch\" \"npm run serve\"",
+    "cypress-verify": "./node_modules/.bin/cypress verify",
+    "cypress-open": "./node_modules/.bin/cypress open",
+    "cypress-run": "./node_modules/.bin/cypress run --headless --browser chrome",
+    "cypress-run-edge": "./node_modules/.bin/cypress run --headless --browser edge",
+    "start-chrome-test": "npm run prereport && npm run cypress:run_chrome_test",
+    "start-chrome-staging": "npm run prereport && npm run cypress:run_chrome_staging",
+    "start-edge": "npm run prereport && npm run cypress-run-edge",
+    "delete:reports": "rimraf cypress/results/* || true",
+    "delete:html-reports": "rimraf cypress/cuccumber-json/* || true",
+    "combine:reports": "jrm cypress/results/combined-report.xml \"cypress/results/*.xml\"",
+    "prereport": "npm run delete:reports && npm run delete:html-reports",
+    "report": "cypress run --reporter cypress-multi-reporters --reporter-options configFile=reporter-config.json",
+    "postreport": "npm run combine:reports"
+  },
+  "author": "Amit Arora",
+  "license": "ISC",
+  "dependencies": {
+    "cypress-commands": "^1.1.0",
+    "cypress-iframe": "^1.0.1",
+    "del": "^6.0.0",
+    "moment": "^2.29.1",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "cypress": "^8.3.0",
+    "cypress-cucumber-attach-screenshots-to-failed-steps": "^1.0.0",
+    "cypress-cucumber-preprocessor": "^4.2.0",
+    "cypress-multi-reporters": "^1.5.0",
+    "junit-report-merger": "^2.2.2",
+    "mocha-junit-reporter": "^2.0.0",
+    "multiple-cucumber-html-reporter": "^1.18.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true,
+    "cucumberJson": {
+      "generate": true,
+      "outputFolder": "cypress/cucumber-json",
+      "filePrefix": "",
+      "fileSuffix": ".cucumber"
+    }
+  }
+}
