@@ -24,3 +24,35 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 }
+
+
+/// <reference types="cypress" />
+
+
+const fs = require('fs-extra')
+const path = require('path')
+
+function getConfigurationByFile (file) {
+  const pathToConfigFile = path.resolve('cypress', 'config', `${file}.json`)
+  if(!fs.existsSync(pathToConfigFile)){
+    {}
+  }
+  return fs.readJson(pathToConfigFile)
+}
+
+const cucumber = require('cypress-cucumber-preprocessor').default
+
+// plugins file
+module.exports = (on, config) => {
+  on('file:preprocessor', cucumber())
+  // accept a configFile value or use test by default
+  const file = config.env.configFile || 'staging'
+  return getConfigurationByFile(file)
+}
+
+
+
+
+/**
+ * @type {Cypress.PluginConfig}
+ */
