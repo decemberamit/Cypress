@@ -1,0 +1,11 @@
+{
+    "defaultCommandTimeout": 8000,
+    "reporter": "mochawesome",
+    "env":
+    {
+        "url": "https://rahulshettyacademy.com/"
+    },
+    "testFiles": "**/**/*.js",
+    "retries": 1,
+    "projectId": "ff753k"    
+}
