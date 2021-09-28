@@ -1,0 +1,99 @@
+steps:
+  - task: NodeTool@0
+    displayName: 'Use Node 14.x'
+    inputs:
+      versionSpec: 14.x
+
+  - task: Npm@1
+    displayName: 'npm install'
+    inputs:
+      workingDir: Maritech.CPM/Maritech.CPM.Ui.Cypress
+      verbose: false
+
+  - task: Npm@1
+    displayName: 'npm custom - cypress verify'
+    inputs:
+      workingDir: Maritech.CPM/Maritech.CPM.Ui.Cypress
+      command: custom
+      verbose: false
+      customCommand: 'run cypress-verify'
+
+  # - task: Npm@1
+  #   displayName: 'npm custom - cypress test run'
+  #   inputs:
+  #     workingDir: Maritech.CPM/Maritech.CPM.Ui.Cypress
+  #     command: custom
+  #     verbose: false
+  #     customCommand: 'run start-chrome'
+
+  - bash: |
+     CMD=""
+     if [ ${{ parameters.browserEnvironmentType }} == "chromeTest" ]
+     then
+       RUNCMD="$CMD npm run start-chrome-test"
+     fi
+     if [ ${{ parameters.browserEnvironmentType }} == "chromeStaging" ]
+     then
+       RUNCMD="$CMD npm run start-chrome-staging"
+     fi
+     eval $RUNCMD    
+    workingDirectory: Maritech.CPM/Maritech.CPM.Ui.Cypress
+    displayName: 'Run the cypress tests'
+
+
+  - bash: |
+      CMD=""
+       RUNCMD="$CMD npm run postreport"
+      eval $RUNCMD
+    workingDirectory: Maritech.CPM/Maritech.CPM.Ui.Cypress
+    displayName: 'Create combined XML reports'
+    condition: succeededOrFailed()
+    continueOnError: true
+
+  # - script: |
+  #    echo List of Directories
+  #    cd "$(Build.SourcesDirectory)"
+  #    dir
+  #    cd "Maritech.CPM"
+  #    dir
+  #    cd "Maritech.CPM.Ui.Cypress"
+  #    cd "cypress"
+  #    cd "cucumber-json"
+  #    dir
+  #   displayName: 'List Of Agent Directories'
+  #   condition: succeededOrFailed()
+
+  - script: 'node Maritech.CPM/Maritech.CPM.Ui.Cypress/cucumber-html-report.js'
+    displayName: 'Generate Cucumber Html Reports'
+    condition: succeededOrFailed()
+  
+  - task: PublishTestResults@2
+    displayName: 'Publish the test reports'
+    inputs:
+      testResultsFiles: '**/combined-report.xml'
+    condition: succeededOrFailed()
+    continueOnError: true
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Cucumber HTML reports'
+    inputs:
+      targetPath: 'reports'
+      artifactName: Test-Reports-${{ parameters.browserEnvironmentType }}
+    condition: succeededOrFailed()
+    continueOnError: true
+
+  #- task: PublishPipelineArtifact@0
+  # displayName: 'Publish screenshots when there were issues'
+  #  inputs:
+  #    targetPath: 'cypress/screenshots'
+  #    artifactName: screenshots-${{ parameters.browserEnvironmentType }}
+  #  condition: failed()
+  #  continueOnError: true
+
+  #- task: PublishPipelineArtifact@0
+  #  displayName: 'Publish videos'
+  #  inputs:
+  #    targetPath: 'cypress/videos'
+  #    artifactName: videos-${{ parameters.browserType }}
+  #  condition: succeededOrFailed()
+  #  continueOnError: true
