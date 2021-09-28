@@ -1,0 +1,32 @@
+name: 'Cypress E2E Testing'
+
+trigger:
+- master
+
+stages:
+- stage: e2e_testing_stage_chrome
+  displayName: 'Chrome E2E Testing'
+  jobs:
+  - job: e2e_testing_job_chrome
+    displayName: 'Run E2E in Chrome'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - template: cypress/templates/cypressRun.yml
+        parameters:
+          browserEnvironmentType: chromeStaging
+          testEnvironment: staging
+        
+# - stage: e2e_testing_stage_edge
+#   displayName: 'Edge E2E Testing'
+#   dependsOn: []
+#   jobs:  
+#   - job: e2e_testing_job_edge
+#     displayName: 'Run E2E in Edge'
+#     pool:
+#       vmImage: windows-latest
+#     steps:
+#       - template: cypress/templates/cypressRun.yml
+#         parameters:
+#           browserType: edge
+#           testEnvironment: test
