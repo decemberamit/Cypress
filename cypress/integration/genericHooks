@@ -1,0 +1,6 @@
+import { Before, Given, When, Then } from "cypress-cucumber-preprocessor/steps";
+
+Before(() => {  
+  cy.getCloudToken()
+  cy.getCpmLoginToken()  
+});
